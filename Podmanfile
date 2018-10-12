@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+# Create a build container
+container=$(buildah from centos:7)
+
+# Installation dependencies (https://github.com/asciidoctor/asciidoctor-pdf#prerequisites)
+buildah run $container yum -y --setopt="tsflags=nodocs" install ruby
+buildah run $container gem install --no-document --minimal-deps --clear-sources prawn --version 2.1.0
+buildah run $container gem install --no-document --minimal-deps --clear-sources public_suffix --version 2.0.5
+buildah run $container gem install --no-document --minimal-deps --clear-sources prawn-svg --version 0.26.0
+buildah run $container gem install --no-document --minimal-deps --clear-sources prawn-templates --version 0.0.4
+
+# Install asciidoctor-pdf
+buildah run $container gem install --no-document --minimal-deps --clear-sources asciidoctor-pdf --pre
+buildah run $container curl -o /usr/local/bin/optimize-pdf https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/bin/optimize-pdf
+buildah run $container chmod +x /usr/local/bin/optimize-pdf
+
+buildah config --workingdir /data $container
+buildah config --entrypoint '["/usr/local/bin/asciidoctor-pdf"]' $container
+
+# Some cleaning
+buildah run $container yum clean all
+
+# Finally saves the running container to an image
+buildah commit $container asciidoctor-pdf:$(date +%Y%m%d)
+
+# Remove building container
+buildah rm $container
