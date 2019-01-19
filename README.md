@@ -23,9 +23,9 @@ $ podman run --rm \
 ```
 
 Where:
-	- `$(CURDIR)`: This location contains files from your host that need to be accessible by asciidoc-pdf. Should be the directory where your asciidoc file are.
-	- `main.adoc`: This is the main asciidoc file
-	- `engagement-journal.pdf`: The name of the output pdf.
+  - `$(CURDIR)`: This location contains files from your host that need to be accessible by asciidoc-pdf. Should be the directory where your asciidoc file are.
+  - `main.adoc`: This is the main asciidoc file
+  - `engagement-journal.pdf`: The name of the output pdf.
 
 # Usage
 
