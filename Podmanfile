@@ -25,6 +25,6 @@ buildah run $container dnf clean all
 buildah commit --rm $container asciidoctor-pdf:$(date +%Y%m%d)
 
 # Push images to external repository
-buildah push reposync:$(date +%Y%m%d) docker://quay.io/tinsjourney/video_transcoding:$(date +%Y%m%d)
-buildah push reposync:$(date +%Y%m%d) docker://docker.io/tinsjourney/video_transcoding:$(date +%Y%m%d)
- buildah push reposync:$(date +%Y%m%d) docker://docker.io/tinsjourney/video_transcoding:latest
+buildah push asciidoctor-pdf:$(date +%Y%m%d) docker://quay.io/tinsjourney/asciidoctor-pdf:$(date +%Y%m%d)
+buildah push asciidoctor-pdf:$(date +%Y%m%d) docker://docker.io/tinsjourney/asciidoctor-pdf:$(date +%Y%m%d)
+buildah push asciidoctor-pdf:$(date +%Y%m%d) docker://docker.io/tinsjourney/asciidoctor-pdf:latest
