@@ -4,7 +4,7 @@
 container=$(buildah from --name asciidoctor-pdf fedora)
 
 # Installation dependencies (https://github.com/asciidoctor/asciidoctor-pdf#prerequisites)
-buildah run $container dnf -y --setopt="tsflags=nodocs" install ruby liberation-sans-fonts python
+buildah run $container dnf -y --setopt="tsflags=nodocs" install ruby liberation-sans-fonts python ghostscript
 
 # Install asciidoctor-pdf
 buildah run $container gem install --no-document --minimal-deps --clear-sources --pre asciidoctor-pdf concurrent-ruby coderay pygments.rb rouge
