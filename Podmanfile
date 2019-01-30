@@ -4,12 +4,12 @@
 container=$(buildah from --name asciidoctor-pdf fedora)
 
 # Installation dependencies (https://github.com/asciidoctor/asciidoctor-pdf#prerequisites)
-buildah run $container dnf -y --setopt="tsflags=nodocs" install ruby liberation-sans-fonts python ghostscript
+buildah run $container /usr/bin/dnf -y --setopt=tsflags=nodocs --setopt=install_weak_deps=false install rubygems liberation-sans-fonts python ghostscript
 
 # Install asciidoctor-pdf
-buildah run $container gem install --no-document --minimal-deps --clear-sources --pre asciidoctor-pdf concurrent-ruby coderay pygments.rb rouge
-buildah run $container curl -o /usr/local/bin/optimize-pdf https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/bin/optimize-pdf
-buildah run $container chmod +x /usr/local/bin/optimize-pdf
+buildah run $container /usr/bin/gem install --no-document --minimal-deps --clear-sources --pre asciidoctor-pdf concurrent-ruby coderay pygments.rb rouge
+buildah run $container /usr/bin/curl -o /usr/local/bin/optimize-pdf https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/bin/optimize-pdf
+buildah run $container /usr/bin/chmod +x /usr/local/bin/optimize-pdf
 
 buildah config --workingdir /data $container
 buildah config --entrypoint '["/usr/local/bin/asciidoctor-pdf"]' $container
@@ -19,12 +19,16 @@ buildah config --author "tintin@gnali.org @tinsjourney" --label name=asciidoctor
 buildah config --label run="podman run --rm --name asciidoctor -v \$(CURDIR):/data:rw,Z IMAGE main.adoc -o engagement-journal.pdf" $container
 
 # Some cleaning
-buildah run $container dnf clean all
+buildah run $container /usr/bin/dnf clean all
+buildah run $container /usr/bin/rm -rf /var/cache/dnf
 
 # Finally saves the running container to an image
+echo "==== Commit image ===="
 buildah commit --rm $container asciidoctor-pdf:$(date +%Y%m%d)
 
 # Push images to external repository
+echo "==== Push image to quay.io ===="
 buildah push asciidoctor-pdf:$(date +%Y%m%d) docker://quay.io/tinsjourney/asciidoctor-pdf:$(date +%Y%m%d)
+echo "==== Push image to docker.io ===="
 buildah push asciidoctor-pdf:$(date +%Y%m%d) docker://docker.io/tinsjourney/asciidoctor-pdf:$(date +%Y%m%d)
 buildah push asciidoctor-pdf:$(date +%Y%m%d) docker://docker.io/tinsjourney/asciidoctor-pdf:latest
