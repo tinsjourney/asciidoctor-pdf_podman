@@ -9,10 +9,6 @@ buildah run $container /usr/bin/dnf -y --setopt=tsflags=nodocs --setopt=install_
 buildah run $container /usr/bin/dnf -y --setopt=tsflags=nodocs --setopt=install_weak_deps=false install rubygems liberation-sans-fonts python ghostscript redhat-text-fonts redhat-display-fonts
 buildah run $container /usr/bin/dnf -y --setopt=tsflags=nodocs --setopt=install_weak_deps=false install redhat-rpm-config gcc ruby-devel
 
-# asciidoctor don't work with TTF fonts but only OTF
-# tar --strip-components=2 -C /usr/share/fonts/redhat/ -xzvf 2.2.0.tar.gz RedHatFont-2.2.0/TTF/
-buildah run $container bash -c '/usr/bin/curl -L https://github.com/RedHatOfficial/RedHatFont/archive/2.2.0.tar.gz | tar --strip-components=2 -C /usr/share/fonts/redhat/ -xz RedHatFont-2.2.0/TTF/'
-
 # Install asciidoctor-pdf
 buildah run $container /usr/bin/gem install --no-document --minimal-deps --clear-sources --pre asciidoctor-pdf concurrent-ruby coderay pygments.rb rouge json asciidoctor-diagram
 buildah run $container /usr/bin/curl -o /usr/local/bin/optimize-pdf https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/bin/optimize-pdf
